@@ -136,3 +136,4 @@ select Jname from j where Jname like '__n%';
 Assignment 3
 
 select concat(upper(substr(Sname,1,1),lower(substr(Sname,2,length(Sname)))) from s;
+select replace(Sname,'la','ro') from s;
