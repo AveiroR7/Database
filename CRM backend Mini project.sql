@@ -18,8 +18,8 @@ desc client;
 
 create table if not exists Ticket(
 Ticket_id int primary key auto_increment,
-Client_id int not null,
-date datetime,
+Client_id int,
+date date,
 Message text,
 Foreign key fk_ticket (Client_id)
 references client(Client_id)
@@ -41,4 +41,14 @@ delimiter ;
 
 call insert_client('Rahul','Wasnik','Credie','Mumbai','r1@gmail','9920140848');
 call insert_client('Rahul','Bhilave','Google','Mumbai','r2@gmail','9920140348');
-select * from Client;
+
+delimiter //
+create procedure insert_ticket(Client_Id int,date date,Message text) 
+begin
+	insert into Ticket (Client_Id,date,Message) values (Client_Id,date,Message);
+    commit;
+end //
+delimiter ;
+
+call insert_ticket(1,'2021-07-01','Hello World');
+select * from ticket;
