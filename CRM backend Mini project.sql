@@ -1,6 +1,5 @@
 create database if not exists CRM;
 use CRM;
--- drop database crm;
 create table if not exists Client
 (
 Client_id int primary key auto_increment,
@@ -44,11 +43,12 @@ on delete  no action
 create table if not exists Management(
 
 Management_id int primary key auto_increment,
-Employee_id int not null,
-First_Name varchar(50),
-Last_Name varchar(50),
-Email varchar(50),
-Position varchar(50) default 'Manager',
+Employee_id int,
+First_Name varchar(50) null default null,
+Last_Name varchar(50) null default null,
+Email varchar(50) null default null,
+Position varchar(50) null default 'Manager',
+
 foreign key fk_manager(Employee_id)
 references employee(Employee_id)
 on update cascade
@@ -59,26 +59,20 @@ on delete no action
 -- desc Management;
 
 create table if not exists Administrator(
-Employee_id int not null auto_increment,
-Management_id int not null,
+Admin_id int,
 First_Name varchar(50),
 Last_Name varchar(50),
-Designation varchar(20),
-
-foreign key (Employee_id)
-references Employee(Employee_id)
-on update cascade
-on delete no action,
-
-foreign key (Management_id)
-references Management(Management_id)
-on update cascade
-on delete no action
-
-
+Designation varchar(20)
 );
 
- -- desc Administrator;
+
+
+create table if not exists  ticket_count(
+ Count int primary key,
+ display varchar(20)
+);
+
+
 
 
 delimiter //
@@ -117,11 +111,11 @@ end //
 delimiter ;
 
 delimiter //
-create procedure	 insert_Administrator(Employee_id int,Management_id int,First_Name varchar(50),
+create procedure	 insert_Administrator(Admin_id int,First_Name varchar(50),
 					 Last_Name varchar(50),Designation varchar(20))
 begin
-	insert into Administrator(Employee_id,Management_id,First_Name,Last_Name,Designation) values 
-							 (Employee_id,Management_id,First_Name,Last_Name,Designation);
+	insert into Administrator(Admin_id,First_Name,Last_Name,Designation) values 
+							 (Admin_id,First_Name,Last_Name,Designation);
                              commit;
 end //
 delimiter ;
@@ -186,23 +180,63 @@ call insert_Ticket(1,'2020-07-01','Some employees leave their computers on all d
  
 call insert_Management(1,'Porter','Harris','porter@barbad.com');
 call insert_Management(2,'Azus','Klien','azus@equlibrium.com');
-call insert_Management(3,'Azus','Klien','azus@equlibrium.com');
-call insert_Management(4,'Porter','Harris','porter@barbad.com');
-call insert_Management(5,'Porter','Harris','porter@barbad.com');
-call insert_Management(6,'Porter','Harris','porter@barbad.com');
- 
- call insert_Administrator(1,1,'Sohan','More','ADMIN');
- call insert_Administrator(2,1,'Shweta','Bhere','ADMIN');
- call insert_Administrator(3,1,'Mohini','More','ADMIN');
- call insert_Administrator(4,2,'Vineeta','Singh','ADMIN');
- call insert_Administrator(5,2,'Davinder','Singh','ADMIN');
- call insert_Administrator(6,2,'Kiran','Waghmare','ADMIN');
- 
- -- create view display as select * from ticket;
- -- desc display;
+call insert_Management(2,'Azus','Klien','azus@equlibrium.com');
+call insert_Management(1,'Porter','Harris','porter@barbad.com');
+call insert_Management(1,'Porter','Harris','porter@barbad.com');
+call insert_Management(1,'Porter','Harris','porter@barbad.com');
 
-select * from client;
-select * from ticket;
-select * from employee;
-select * from management;
-select * from administrator;
+
+ 
+ call insert_Administrator(1,'Rahul','Wasnik','DBA');
+ call insert_Administrator(2,'Rahul','Bhilave','DBA');
+ 
+ 
+
+create view retention as select Ticket_id,Company,Location, Employee.First_Name,Designation  from client as admin inner join Employee on admin.client_id = employee.Employee_id;
+
+delimiter $$
+create  procedure my_count()
+begin
+		select count(*) as Count from retention;
+        
+end $$
+delimiter ;
+
+call my_count;
+
+-- ------------------------------------------------------------------  Tigger  
+create table counter(count int,display varchar(20));
+delimiter //
+CREATE TRIGGER counter_check BEFORE INSERT ON ticket_count 
+FOR EACH ROW
+BEGIN
+
+insert into counter values (1,'Inserted');
+END //
+delimiter ; 
+
+--------------------------------------------------------------------------------------
+
+Update Employee Set Designation= 'Database Developer' where Employee_id = 4;
+select * from Employee;
+
+
+-- ----------- ---------------------------------------cursor ------------------------------------
+
+delimiter //
+create procedure cur()
+begin
+
+		declare First_Name varchar(50);
+        declare Last_Name varchar(50);
+        declare Employee_id int;
+		declare c3 CURSOR for select * from Employee;
+        open c3;
+        while (Employee_id < 5) do
+			fetch c3 into First_Name,Last_Name;
+		end while;
+end //
+delimiter ;
+
+
+call cur;
