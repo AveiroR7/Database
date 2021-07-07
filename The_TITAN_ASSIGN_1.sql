@@ -19,7 +19,8 @@ select FIRST_NAME,LAST_NAME, HIRE_DATE from employees where HIRE_DATE > '1987-09
 select DEPARTMENT_NAME, count(EMPLOYEE_ID) from departments join employees on departments.department_id = employees.DEPARTMENT_ID group by department_name;
 
 --7.
-
+select employees.EMPLOYEE_ID,JOB_TITLE, datediff(END_DATE,START_DATE) as NUMBER_OF_DAYS from employees join jobs on employees.JOB_ID = jobs.JOB_ID 
+join  job_history on job_history.EMPLOYEE_ID = employees.EMPLOYEE_ID where employees.department_id = 90;
 
 --8.
 select departments.DEPARTMENT_ID, DEPARTMENT_NAME, FIRST_NAME  from departments join employees where departments.MANAGER_ID = employees.MANAGER_ID;
