@@ -16,7 +16,7 @@ select Employee_id,Last_name,departments.Manager_id  from departments join emplo
 select FIRST_NAME,LAST_NAME, HIRE_DATE from employees where HIRE_DATE > '1987-09-20'; 
 
 --6. 
-
+select DEPARTMENT_NAME, count(EMPLOYEE_ID) from departments join employees on departments.department_id = employees.DEPARTMENT_ID group by department_name;
 
 --7.
 
